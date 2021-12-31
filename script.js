@@ -1,79 +1,81 @@
 'use strict';
-// It is possible to declare several empty variables in one let. For exsample currentRealScoreOne, CurrentRealScoreTwo, realScoreOne, realScoreTwo, and etc.
-
-// Elements variables (As we have an  elements with id we can use getElementById insted of querySelector)
+// HTML elements variables
 const playerOne = document.querySelector('.player--0');
 const playerTwo = document.querySelector('.player--1');
 const roll = document.querySelector('.btn--roll');
 const newGame = document.querySelector('.btn--new');
 const holdScore = document.querySelector('.btn--hold');
-const buttonStyle = document.querySelectorAll('.btn'); // To be abel to use this element in loop, we have to target it with querySelectorAll.
 const dicePicture = document.querySelector('.dice');
 const settingsSection = document.getElementById('settings');
-// These all are counter variables, they have to be displayed outside of function wihch adds to them. Othervise if they would be displayed in function they would always be set on 0.
+const buttonStyle = document.querySelectorAll('.btn'); // Here is used querySelectorAll because this variable is used in the loop.
+
+// These all are counter variables,
 let currentRealScoreOne = 0; //
 let currentRealScoreTwo = 0;
 let realScoreOne = 0;
 let realScoreTwo = 0;
-let playing = true;
+let playing = true; // This variable checks is it game still active (did somebody won).
 let playerOneName = 'Player 1';
 let playerTwoName = 'Player 2';
 let victoryScore = 100;
 
-// Functions
+// Function for displaying the cube
 const diceSide = function (num) {
   return `dice-${num}.png`;
 };
+//Function for displaying in element
 const displaySomething = function (where, what) {
   document.querySelector(where).textContent = what;
 };
 
 //Settings
+// Event Listener for opening and closing settings button.
 document
   .getElementById('settingsButtonOpen')
   .addEventListener('click', function () {
     settingsSection.classList.remove('hidden');
     settingsSection.classList.add('settings');
-    document.getElementById('settingsButton').innerText = `Save and close`;
+    displaySomething('#settingsButton', `Save and close`);
   });
 
+// Function for taking values form the setting options.
 const settings = function (event) {
   playerOneName = document.getElementById('player0').value || `PLAYER 1`;
   playerTwoName = document.getElementById('player1').value || `PLAYER 2`;
   victoryScore = Number(document.getElementById('victoryScore').value) || 100;
-  document.getElementById('name--0').innerText = playerOneName;
-  document.getElementById('name--1').innerText = playerTwoName;
+  displaySomething('#name--0', playerOneName);
+  displaySomething('#name--1', playerTwoName);
   settingsSection.classList.add('hidden');
   settingsSection.classList.remove('settings');
 };
-
+//Executing of the function above
 document
   .getElementById('settingsButton')
   .addEventListener('click', function () {
     settings();
   });
 
-// Seting initial score on 0.
+// Setting initial score on 0.
 displaySomething('#score--0', 0);
 displaySomething('#score--1', 0);
 
-//Loops
-const addBlure = function () {
+//Loops which makes buttons bluer after the victory.
+const addBluer = function () {
   for (let i = 0; i < buttonStyle.length; i++) {
-    buttonStyle[i].classList.toggle('btn-blure');
+    buttonStyle[i].classList.toggle('btn-bluer');
   }
 };
 
-// Hiding dice on the beagining.
+// Hiding dice on the beginning of the game.
 dicePicture.classList.add('hidden');
 
-// Part witch rolls dice and set realScore(One and Twos)
+// Part witch rolls dice and set currentScore(One and Twos)
 roll.addEventListener('click', function () {
   if (playing) {
     dicePicture.classList.remove('hidden');
     let rolledResult = Math.trunc(Math.random() * 6) + 1;
 
-    // can't be 7 it has ti be 6 + 1 because if not + 1 returns sometimes 0.
+    // can't be 7 it has it be 6 + 1 because if not + 1 returns sometimes 0.
     if (playerOne.classList.contains('player--active')) {
       dicePicture.src = diceSide(rolledResult);
       currentRealScoreTwo = 0;
@@ -112,13 +114,12 @@ holdScore.addEventListener('click', function () {
       displaySomething('#score--0', realScoreOne);
       displaySomething('#current--0', 0);
       playerTwo.classList.add('player--active');
-      playerOne.classList.remove('player--active'); // Toggle check is it class add and if it is remove it and if is not there, remove it.
-
+      playerOne.classList.remove('player--active');
       if (realScoreOne > victoryScore) {
-        displaySomething('#score--0', 'WICTORY');
+        displaySomething('#score--0', 'VICTORY');
         playing = false;
         dicePicture.classList.add('hidden');
-        addBlure();
+        addBluer();
       }
     } else if (playerTwo.classList.contains('player--active')) {
       realScoreTwo += currentRealScoreTwo;
@@ -129,16 +130,17 @@ holdScore.addEventListener('click', function () {
       playerTwo.classList.remove('player--active');
 
       if (realScoreTwo > victoryScore) {
-        displaySomething('#score--1', 'WICTORY');
+        displaySomething('#score--1', 'VICTORY');
         playing = false;
         dicePicture.classList.add('hidden');
-        addBlure();
+        addBluer();
       }
     }
   }
 });
 
-// Part wich resets the game
+// Part which resets the game
+
 newGame.addEventListener('click', function () {
   currentRealScoreOne = 0;
   currentRealScoreTwo = 0;
@@ -153,8 +155,9 @@ newGame.addEventListener('click', function () {
   displaySomething('#current--0', currentRealScoreTwo);
   displaySomething('#current--1', currentRealScoreTwo);
   playing = true;
-
-  addBlure();
+  if (newGame.classList.contains('btn-bluer')) {
+    addBluer();
+  }
 });
 
 // 1.Dry out code.

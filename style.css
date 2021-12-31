@@ -169,7 +169,7 @@ main {
 .hidden {
   display: none;
 }
-.btn-blure {
+.btn-bluer {
   background-color: rgba(102, 27, 27, 0.8);
   color: rgba(255, 255, 255, 0.6);
 }
